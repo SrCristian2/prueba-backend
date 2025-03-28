@@ -142,7 +142,7 @@ describe('ProductsService', () => {
     } as Product;
 
     jest.spyOn(repository, 'findOne').mockResolvedValueOnce(existingProduct);
-    jest.spyOn(repository, 'findOne').mockResolvedValueOnce(conflictingProduct); // Simula que ya existe otro producto con el mismo nombre.
+    jest.spyOn(repository, 'findOne').mockResolvedValueOnce(conflictingProduct);
 
     const result = await service.update('uuid-1', reply, {
       name: 'Producto B',
