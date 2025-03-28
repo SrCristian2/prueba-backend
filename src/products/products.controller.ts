@@ -7,11 +7,13 @@ import {
   Delete,
   Res,
   Put,
+  Query,
 } from '@nestjs/common';
 import { ProductsService } from './products.service';
 import { CreateProductDto } from './dto/create-product.dto';
 import { UpdateProductDto } from './dto/update-product.dto';
 import { FastifyReply } from 'fastify';
+import { PaginationDto } from '../helpers/PaginationDto';
 
 @Controller('products')
 export class ProductsController {
@@ -26,8 +28,8 @@ export class ProductsController {
   }
 
   @Get()
-  findAll(@Res() reply: FastifyReply) {
-    return this.productsService.findAll(reply);
+  findAll(@Res() reply: FastifyReply, @Query() query: PaginationDto) {
+    return this.productsService.findAll(reply, query);
   }
 
   @Get(':id')

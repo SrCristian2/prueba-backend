@@ -6,6 +6,8 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { Product } from './entities/product.entity';
 import { Repository } from 'typeorm';
 import { response } from '../helpers/Response';
+import { PaginationDto } from '../helpers/PaginationDto';
+import { paginate } from '../helpers/Paginate';
 
 @Injectable()
 export class ProductsService {
@@ -39,12 +41,18 @@ export class ProductsService {
     }
   }
 
-  async findAll(reply: FastifyReply) {
+  async findAll(reply: FastifyReply, query: PaginationDto) {
     try {
-      const allProducts = await this.productRepository.find({
-        where: { isDeleted: false },
-        order: { createdAt: 'DESC' },
-      });
+      const { page, pageSize } = query;
+      const allProducts = await paginate(
+        this.productRepository,
+        [],
+        { isDeleted: false },
+        page,
+        pageSize,
+        { createdAt: 'DESC' },
+      );
+
       return response(
         reply,
         200,

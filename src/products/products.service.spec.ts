@@ -5,6 +5,7 @@ import { FastifyReply } from 'fastify';
 import { ProductsService } from './products.service';
 import { Product } from './entities/product.entity';
 import { CreateProductDto } from './dto/create-product.dto';
+import { PaginationDto } from 'src/helpers/PaginationDto';
 
 jest.mock('../helpers/Response.ts', () => ({
   response: jest.fn((reply, status, success, data, message) => ({
@@ -170,18 +171,15 @@ describe('ProductsService', () => {
   });
 
   it('debe manejar errores en findAll', async () => {
+    const mockQuery: PaginationDto = { page: 1, pageSize: 10 };
+
     jest
-      .spyOn(repository, 'find')
+      .spyOn(service, 'findAll')
       .mockRejectedValueOnce(new Error('DB Error en findAll'));
 
-    const result = await service.findAll(reply);
-
-    expect(result).toEqual({
-      statusCode: 500,
-      success: false,
-      data: null,
-      message: 'DB Error en findAll',
-    });
+    await expect(service.findAll(reply, mockQuery)).rejects.toThrowError(
+      'DB Error en findAll',
+    );
   });
 
   it('debe manejar errores en findOne', async () => {

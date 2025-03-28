@@ -4,6 +4,7 @@ import { ProductsService } from './products.service';
 import { CreateProductDto } from './dto/create-product.dto';
 import { UpdateProductDto } from './dto/update-product.dto';
 import { FastifyReply } from 'fastify';
+import { PaginationDto } from 'src/helpers/PaginationDto';
 
 describe('ProductsController', () => {
   let controller: ProductsController;
@@ -61,19 +62,26 @@ describe('ProductsController', () => {
   });
 
   describe('findAll', () => {
-    it('debe llamar a ProductsService.findAll y retornar los productos', async () => {
+    it('debe llamar a ProductsService.findAll con reply y query, y retornar los productos paginados', async () => {
       const mockResponse = {
-        success: true,
-        data: [{ id: '1', name: 'Producto 1' }],
+        items: [{ id: '1', name: 'Producto 1' }],
+        pagination: {
+          total: 1,
+          currentPage: 1,
+          pageSize: 10,
+          totalPages: 1,
+          nextPage: null,
+          prevPage: null,
+        },
       };
 
-      (service.findAll as jest.Mock).mockResolvedValueOnce(
-        Promise.resolve(mockResponse),
-      );
+      const mockQuery: PaginationDto = { page: 1, pageSize: 10 };
 
-      const result = await controller.findAll(reply);
+      (service.findAll as jest.Mock).mockResolvedValueOnce(mockResponse);
 
-      expect(service.findAll).toHaveBeenCalledWith(reply);
+      const result = await controller.findAll(reply, mockQuery);
+
+      expect(service.findAll).toHaveBeenCalledWith(reply, mockQuery);
       expect(result).toEqual(mockResponse);
     });
   });
