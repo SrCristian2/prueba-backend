@@ -6,7 +6,7 @@ import { ProductsService } from './products.service';
 import { Product } from './entities/product.entity';
 import { CreateProductDto } from './dto/create-product.dto';
 
-jest.mock('../helpers/response', () => ({
+jest.mock('../helpers/Response.ts', () => ({
   response: jest.fn((reply, status, success, data, message) => ({
     statusCode: status,
     success,
